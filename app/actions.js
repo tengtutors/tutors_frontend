@@ -2,7 +2,7 @@
 
 import OpenAI from "openai";
 import { nanoid } from 'nanoid'
-import { promises as fs } from 'fs';
+import fs from 'fs';
 import path from 'path';
 
 export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt = "" }) {
@@ -40,7 +40,7 @@ async function createArticle(extractedText, prompt, openai) {
         `;
         
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-1106-preview",
+            model: "gpt-3.5-turbo-0125",
             messages: [
                 { role: 'system', content: "As an SEO professional, you will help user generate article with high-value keywords to enhance visibility and attract organic traffic." },
                 { role: 'user', content: prompter }
@@ -77,14 +77,15 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         // Menyimpan file audio yang diunduh ke dalam buffer
         const randId = nanoid();
         
-        const tempFilePath = path.join(path.resolve(process.cwd(), "temp"), `video-${randId}.mp4`); // Menyimpan file sementara di direktori temp
-        await fs.writeFileSync(tempFilePath, Buffer.from(videoBuffer));
+        const tempFilePath = path.join(process.cwd(), "temp", `video-${randId}.mp4`); // Menyimpan file sementara di direktori temp
+
+        fs.writeFileSync(tempFilePath, Buffer.from(videoBuffer));
     
         // Membuat file stream dari file audio yang telah diunduh
-        const videoStream = await fs.createReadStream(tempFilePath);
+        const videoStream = fs.createReadStream(tempFilePath);
     
         videoStream.on('end', async () => {
-            await fs.unlinkSync(tempFilePath);
+            fs.unlinkSync(tempFilePath);
             console.log('Temporary video file removed:', tempFilePath);
         });
     
