@@ -3,6 +3,7 @@
 import OpenAI from "openai";
 import { nanoid } from 'nanoid'
 import fs from 'fs';
+import path from 'path';
 
 export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt = "" }) {
 
@@ -12,7 +13,7 @@ export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt =
     
     try {
         const openai = new OpenAI({ apiKey: openaiAPI });
-        
+
         const extractedVideoUrl = await extractVideoFromTikTokVideo(tiktokURL);
         const extractedText = await convertVideoToText(extractedVideoUrl, openai);
         const articleText = await createArticle(extractedText, prompt, openai);
@@ -33,7 +34,7 @@ async function createArticle(extractedText, prompt, openai) {
         const prompter = `
             Context: ${extractedText}\n
             
-            User: Generate an SEO-friendly article based on this context and use heading also subheading for each part to be clear! \n
+            User: Generate an SEO-friendly article based on this context! \n
             
             ${prompt ? `${prompt}` : ''}
         `;
@@ -75,7 +76,8 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         
         // Menyimpan file audio yang diunduh ke dalam buffer
         const randId = nanoid();
-        const tempFilePath = `/temp/video-${randId}.mp4`; // Menyimpan file sementara di direktori temp
+        
+        const tempFilePath = path.join(path.resolve(process.cwd(), "temp"), `video-${randId}.mp4`); // Menyimpan file sementara di direktori temp
         fs.writeFileSync(tempFilePath, Buffer.from(videoBuffer));
     
         // Membuat file stream dari file audio yang telah diunduh
