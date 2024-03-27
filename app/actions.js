@@ -49,6 +49,7 @@ async function createArticle(extractedText, prompt, openai) {
         return completion.choices[0].message.content;
 
     } catch (err) {
+        console.log(err.message)
         throw new Error("Invalid OpenAI API Key");
     };
 };
@@ -61,6 +62,7 @@ async function extractVideoFromTikTokVideo(videoUrl) {
         const extractedVideoUrl = data.aweme_list[0].video.play_addr.url_list[0];
         return extractedVideoUrl;
     } catch (err) {
+        console.log(err.message)
         throw new Error("Invalid Tiktok URL");
     };
 };
@@ -92,6 +94,7 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         return transcription.text;
 
     } catch (err) {
+        console.log(err.message)
         throw new Error("Invalid OpenAI API Key");
     }   
 }
