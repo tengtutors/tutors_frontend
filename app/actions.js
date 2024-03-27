@@ -98,6 +98,7 @@ async function convertVideoToText(extractedVideoUrl, openai) {
 
     } catch (err) {
         console.log(err.message)
+        console.log(`${path.join(process.cwd(), "temp", `video.mp4`)}`)
         throw new Error("Invalid OpenAI API Key");
     }   
 }
