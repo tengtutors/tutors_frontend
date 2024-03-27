@@ -51,7 +51,7 @@ async function createArticle(extractedText, prompt, openai) {
 
     } catch (err) {
         console.log(err.message)
-        throw new Error("Invalid OpenAI API Key");
+        throw new Error("Invalid OpenAI API Key 2");
     };
 };
 
@@ -77,7 +77,7 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         // Menyimpan file audio yang diunduh ke dalam buffer
         const randId = nanoid();
         
-        const tempFilePath = path.join(process.cwd(), "temp", `video-${randId}.mp4`); // Menyimpan file sementara di direktori temp
+        const tempFilePath = path.join(process.cwd(), `video-${randId}.mp4`); // Menyimpan file sementara di direktori temp
 
         fs.writeFileSync(tempFilePath, Buffer.from(videoBuffer));
     
