@@ -75,7 +75,7 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         
         // Menyimpan file audio yang diunduh ke dalam buffer
         const randId = nanoid();
-        const tempFilePath = `./temp/video-${randId}.mp4`; // Menyimpan file sementara di direktori temp
+        const tempFilePath = `/temp/video-${randId}.mp4`; // Menyimpan file sementara di direktori temp
         fs.writeFileSync(tempFilePath, Buffer.from(videoBuffer));
     
         // Membuat file stream dari file audio yang telah diunduh
