@@ -91,7 +91,7 @@ const CreateArticleForm = () => {
         try {
             setLoading(true);
             // const res = await generateArticle({ openaiAPI, tiktokURL, prompt });
-            const res2 = await fetch("http://localhost:3000/api/create", {
+            const res2 = await fetch("/api/create", {
                 method: "POST",
                 body: JSON.stringify({ openaiAPI, tiktokURL, prompt })
             });
