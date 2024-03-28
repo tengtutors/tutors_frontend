@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import copy from "copy-to-clipboard";
-import { generateArticle } from "@/app/actions";
+import { createArticle, generateArticle } from "@/app/actions";
 import Markdown from 'react-markdown';
 import remarkMath from 'remark-math'
 const Notif = dynamic(() => import("@/components/Notif"));
@@ -90,8 +90,9 @@ const CreateArticleForm = () => {
         
         try {
             setLoading(true);
-            const res = await generateArticle({ openaiAPI, tiktokURL, prompt });
-            setArticle(res);
+            const extractedText = await generateArticle({ openaiAPI, tiktokURL, prompt });
+            const res2 = await createArticle({ extractedText, prompt, openaiAPI });
+            setArticle(res2);
             setNotif({ active: true, message: "Article Created!", success: 1 });
         } catch (err) {
             setNotif({ active: true, message: `${err?.message || "Something went wrong!"}`, success: -1 });

@@ -13,9 +13,9 @@ export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt =
 
         const extractedVideoUrl = await extractVideoFromTikTokVideo(tiktokURL);
         const extractedText = await convertVideoToText(extractedVideoUrl, openai);
-        const articleText = await createArticle(extractedText, prompt, openai);
+        // const articleText = await createArticle(extractedText, prompt, openai);
 
-        return articleText;
+        return extractedText;
         
     } catch (err) {
         throw new Error(err.message);
@@ -25,9 +25,11 @@ export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt =
 
 };
 
-async function createArticle(extractedText, prompt, openai) {
+export async function createArticle({extractedText, prompt, openaiAPI = ""}) {
     try {
 
+        const openai = new OpenAI({ apiKey: openaiAPI });
+        
         const prompter = `
             Context: ${extractedText}\n
             
@@ -37,7 +39,7 @@ async function createArticle(extractedText, prompt, openai) {
         `;
         
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-0125-preview",
+            model: "gpt-3.5-turbo-0125", // gpt-3.5-turbo-0125 // gpt-4-0125-preview
             messages: [
                 { role: 'system', content: "As an SEO professional, you will help user generate article with high-value keywords to enhance visibility and attract organic traffic." },
                 { role: 'user', content: prompter }
