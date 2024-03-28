@@ -11,6 +11,7 @@
   "dependencies": {
     "copy-to-clipboard": "^3.3.3",
     "daisyui": "^4.9.0",
+    "got": "^14.2.1",
     "nanoid": "^5.0.6",
     "next": "14.1.4",
     "openai": "^4.29.2",

@@ -4,6 +4,9 @@ import OpenAI from "openai";
 import { nanoid } from 'nanoid'
 import fs from 'fs';
 import path from 'path';
+import { PassThrough, Readable } from "stream";
+import https, { get } from 'https';
+import got from 'got';
 
 export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt = "" }) {
 
@@ -16,6 +19,8 @@ export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt =
 
         const extractedVideoUrl = await extractVideoFromTikTokVideo(tiktokURL);
         const extractedText = await convertVideoToText(extractedVideoUrl, openai);
+        console.log(extractedText)
+        return;
         const articleText = await createArticle(extractedText, prompt, openai);
 
         return articleText;
@@ -77,13 +82,29 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         // Menyimpan file audio yang diunduh ke dalam buffer
         const randId = nanoid();
         
-        const tempFilePath = path.join(process.cwd(), `video-${randId}.mp4`); // Menyimpan file sementara di direktori temp
+        const tempFilePath = path.join(process.cwd(), "tmp", `video-${randId}.mp4`); // Menyimpan file sementara di direktori temp
 
+        // console.log(extractedVideoUrl)
+        // const videoStream = await got.stream(extractedVideoUrl) // Request {}
+        // const videoStream = https.get(extractedVideoUrl); // ClientRequest {}
+
+        // const videoStream2 = await fetch(extractedVideoUrl);
+        // const videoStream = Readable.fromWeb(videoStream2.body) // Readable {}
+        // console.log(videoStream)
+    
+        
+        
+
+
+        // console.log(videoStream)
+        
+        // return;
+        checkAndCreateDirectory( path.join(process.cwd(), "tmp") );
         fs.writeFileSync(tempFilePath, Buffer.from(videoBuffer));
     
         // Membuat file stream dari file audio yang telah diunduh
-        const videoStream = fs.createReadStream(tempFilePath);
-    
+        const videoStream = fs.createReadStream(tempFilePath); // ReadStream {}
+
         videoStream.on('end', async () => {
             fs.unlinkSync(tempFilePath);
             console.log('Temporary video file removed:', tempFilePath);
@@ -95,10 +116,24 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         });
         
         return transcription.text;
+        return ""
 
     } catch (err) {
         console.log(err.message)
-        console.log(`${path.join(process.cwd(), "temp", `video.mp4`)}`)
+        // console.log(`${path.join(process.cwd(), "temp", `video.mp4`)}`)
         throw new Error("Invalid OpenAI API Key");
     }   
+};
+
+function checkAndCreateDirectory(directoryPath) {
+    if (!fs.existsSync(directoryPath)) {
+        try {
+            fs.mkdirSync(directoryPath, { recursive: true });
+            console.log(`Directory '${directoryPath}' created successfully.`);
+        } catch (error) {
+            console.error(`Error creating directory '${directoryPath}':`, error);
+        }
+    } else {
+        console.log(`Directory '${directoryPath}' already exists.`);
+    }
 }
