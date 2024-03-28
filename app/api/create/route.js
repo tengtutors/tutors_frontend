@@ -1,17 +1,15 @@
-'use server'
-
 import OpenAI from "openai";
 import { nanoid } from 'nanoid'
 import fs from 'fs';
 import path from 'path';
-import { PassThrough, Readable } from "stream";
-import https, { get } from 'https';
-import got from 'got';
 
-export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt = "" }) {
+export async function POST (req) {
+    console.log("MASUK")
+    const { openaiAPI = "", tiktokURL = "", prompt = "" } = await req.json();
 
+    
     if (openaiAPI.length < 30 || openaiAPI.length > 100 || !tiktokURL.includes("tiktok")) {
-        throw new Error("Wrong API/Tiktok URL")
+        return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
     };
     
     try {
@@ -20,18 +18,17 @@ export async function generateArticle({ openaiAPI = "", tiktokURL = "", prompt =
         const extractedVideoUrl = await extractVideoFromTikTokVideo(tiktokURL);
         const extractedText = await convertVideoToText(extractedVideoUrl, openai);
         console.log(extractedText)
-        return;
+        return Response.json({ success: false, message: extractedText }, { status: 401 });
+
         const articleText = await createArticle(extractedText, prompt, openai);
 
-        return articleText;
+        return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
         
     } catch (err) {
         throw new Error(err.message);
     };
 
-    // const videoUrl = "https://www.tiktok.com/@ace_scorers/video/7349991869650078978";
-
-};
+}
 
 async function createArticle(extractedText, prompt, openai) {
     try {
@@ -99,24 +96,24 @@ async function convertVideoToText(extractedVideoUrl, openai) {
         // console.log(videoStream)
         
         // return;
-        checkAndCreateDirectory( path.join(process.cwd(), "tmp") );
+        // checkAndCreateDirectory( path.join(process.cwd(), "tmp") );
+        console.log(tempFilePath)
         fs.writeFileSync(tempFilePath, Buffer.from(videoBuffer));
     
         // Membuat file stream dari file audio yang telah diunduh
         const videoStream = fs.createReadStream(tempFilePath); // ReadStream {}
 
-        videoStream.on('end', async () => {
+        videoStream.on('end', () => {
             fs.unlinkSync(tempFilePath);
             console.log('Temporary video file removed:', tempFilePath);
         });
     
-        // const transcription = await openai.audio.transcriptions.create({
-        //     file: videoStream,
-        //     model: "whisper-1",
-        // });
+        const transcription = await openai.audio.transcriptions.create({
+            file: videoStream,
+            model: "whisper-1",
+        });
         
-        // return transcription.text;
-        return "ddd"
+        return transcription.text;
 
     } catch (err) {
         console.log(err.message)

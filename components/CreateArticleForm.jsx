@@ -90,8 +90,16 @@ const CreateArticleForm = () => {
         
         try {
             setLoading(true);
-            const res = await generateArticle({ openaiAPI, tiktokURL, prompt });
-            setArticle(res);
+            // const res = await generateArticle({ openaiAPI, tiktokURL, prompt });
+            const res2 = await fetch("http://localhost:3000/api/create", {
+                method: "POST",
+                body: JSON.stringify({ openaiAPI, tiktokURL, prompt })
+            });
+
+            const res = await res2.json();
+            console.log(res.message);
+
+            // setArticle(res);
             setNotif({ active: true, message: "Article Created!", success: 1 });
         } catch (err) {
             setNotif({ active: true, message: `${err?.message || "Something went wrong!"}`, success: -1 });
