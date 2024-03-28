@@ -24,8 +24,8 @@ const CreateArticleForm = () => {
     const [article, setArticle] = useState("");
     
     // Form State
-    const [openaiAPI, setOpenaiAPI] = useState("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");
-    const [tiktokURL, setTiktokURL] = useState("https://www.tiktok.com/@ace_scorers/video/7349991869650078978");
+    const [openaiAPI, setOpenaiAPI] = useState("");
+    const [tiktokURL, setTiktokURL] = useState("");
     const [prompt, setPrompt] = useState("");
 
     // Error State
@@ -90,16 +90,8 @@ const CreateArticleForm = () => {
         
         try {
             setLoading(true);
-            // const res = await generateArticle({ openaiAPI, tiktokURL, prompt });
-            const res2 = await fetch("/api/create", {
-                method: "POST",
-                body: JSON.stringify({ openaiAPI, tiktokURL, prompt })
-            });
-
-            const res = await res2.json();
-            console.log(res.message);
-
-            // setArticle(res);
+            const res = await generateArticle({ openaiAPI, tiktokURL, prompt });
+            setArticle(res);
             setNotif({ active: true, message: "Article Created!", success: 1 });
         } catch (err) {
             setNotif({ active: true, message: `${err?.message || "Something went wrong!"}`, success: -1 });
