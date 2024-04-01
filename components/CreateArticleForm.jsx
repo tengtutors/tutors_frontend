@@ -91,9 +91,13 @@ const CreateArticleForm = () => {
         try {
             setLoading(true);
             const extractedText = await generateArticle({ openaiAPI, tiktokURL, prompt });
-            const res2 = await createArticle({ extractedText, prompt, openaiAPI });
-            setArticle(res2);
-            setNotif({ active: true, message: "Article Created!", success: 1 });
+            if (!extractedText) {
+                setNotif({ active: true, message: "Tiktok Video too long!", success: -1 });
+            } else {
+                const res2 = await createArticle({ extractedText, prompt, openaiAPI });
+                setArticle(res2);
+                setNotif({ active: true, message: "Article Created!", success: 1 });
+            }
         } catch (err) {
             setNotif({ active: true, message: `${err?.message || "Something went wrong!"}`, success: -1 });
         } finally {
