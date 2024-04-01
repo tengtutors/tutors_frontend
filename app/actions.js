@@ -41,7 +41,7 @@ export async function createArticle({extractedText, prompt, openaiAPI = ""}) {
         const completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-0125", // gpt-3.5-turbo-0125 // gpt-4-0125-preview
             messages: [
-                { role: 'system', content: "As an SEO professional, you will help user generate article with high-value keywords to enhance visibility and attract organic traffic." },
+                { role: 'system', content: "You will generate an article based on the context provided" },
                 { role: 'user', content: prompter }
             ],
         });
