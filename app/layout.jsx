@@ -5,13 +5,13 @@ import Navbar from "@/components/Navbar";
 const RootLayout = async ({ children }) => {
   return (
     <html lang="en">
-        <body className={`${poppins.className} antialiased bg-basePrimary relative text-textPrimary min-h-screen`}>
+        <body className={`${poppins.className} antialiased bg-basePrimary relative text-textPrimary`}>
 
               <Navbar />
               
-              <div className="">
+              <section className="">
                   {children}
-              </div>
+              </section>
 
         </body>
     </html>
