@@ -47,6 +47,7 @@ module.exports = {
   },
   plugins: [
     require("daisyui"), // https://daisyui.com/
+    require('@tailwindcss/typography'),
     backgroundDots, // https://ui.aceternity.com/
   ],
 }
