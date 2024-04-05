@@ -62,6 +62,9 @@ const CreateArticleForm = () => {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
+        
+        setNotif({ active: true, message: "Third Party API error :(", success: -1 });
+        return;
 
         let check = true;
 

@@ -57,8 +57,10 @@ export async function createArticle({extractedText, prompt, openaiAPI = ""}) {
 // Fungsi untuk mengekstrak audio dari video TikTok
 async function extractVideoFromTikTokVideo(videoUrl) {
     try {
+        console.log("MASUK")
         const res = await fetch(`https://api.douyin.wtf/tiktok_video_data/?tiktok_video_url=${videoUrl}`);
         const data = await res.json();
+        console.log(data)
         const extractedVideoUrl = data.aweme_list[0].video.play_addr.url_list[0];
         return extractedVideoUrl;
     } catch (err) {
