@@ -65,8 +65,8 @@ const CreateArticleForm = () => {
 
         e.preventDefault();
         
-        // setNotif({ active: true, message: "Third Party API error :(", success: -1 });
-        // return;
+        setNotif({ active: true, message: "Wait", success: -1 });
+        return;
 
         let check = true;
 
