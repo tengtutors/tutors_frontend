@@ -26,7 +26,7 @@ export async function generateArticle({ openaiAPI = "", tiktokURL = "" }) {
 };
 
 const parameters = {
-    'aweme_id': "7352994743451684113", // video_id
+    'aweme_id': "0", // video_id
     // 'version_name': true,
     'version_code': 300904, // true
     // 'build_number': true,
@@ -95,6 +95,12 @@ export async function createArticle({extractedText, prompt, openaiAPI = ""}) {
 // Fungsi untuk mengekstrak audio dari video TikTok
 async function extractVideoFromTikTokVideo(videoUrl) {
     try {
+
+        var videoIdRegex = /\/video\/(\d+)/;
+        var match = videoUrl.match(videoIdRegex);
+        if (!match) throw new Error("Invalid Tiktok URL");
+
+        parameters.aweme_id = match[1];
 
         const url = `https://api22-normal-c-alisg.tiktokv.com/aweme/v1/feed/`+ Object.keys(parameters).map(
             (key, index) => `${index > 0 ? '&' : '?'}${key}=${parameters[key]}`
