@@ -6,6 +6,7 @@ import copy from "copy-to-clipboard";
 import { createArticle, generateArticle } from "@/app/actions";
 import Markdown from 'react-markdown';
 import remarkMath from 'remark-math'
+import remarkGfm from 'remark-gfm';
 const Notif = dynamic(() => import("@/components/Notif"));
 
 const CreateArticleForm = () => {
@@ -22,6 +23,7 @@ const CreateArticleForm = () => {
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
     const [article, setArticle] = useState("");
+    const [audioText, setAudioText] = useState("")
     
     // Form State
     const [openaiAPI, setOpenaiAPI] = useState("");
@@ -63,8 +65,8 @@ const CreateArticleForm = () => {
 
         e.preventDefault();
         
-        setNotif({ active: true, message: "Third Party API error :(", success: -1 });
-        return;
+        // setNotif({ active: true, message: "Third Party API error :(", success: -1 });
+        // return;
 
         let check = true;
 
@@ -98,7 +100,8 @@ const CreateArticleForm = () => {
                 setNotif({ active: true, message: "Tiktok Video too long!", success: -1 });
             } else {
                 const res2 = await createArticle({ extractedText, prompt, openaiAPI });
-                setArticle(res2);
+                setArticle(res2.article);
+                setAudioText(res2.audio)
                 setNotif({ active: true, message: "Article Created!", success: 1 });
             }
         } catch (err) {
@@ -189,24 +192,49 @@ const CreateArticleForm = () => {
                     </button>
 
                     { article && 
-                        <div className="flex flex-col gap-2 mb-20">
-                            <label className="flex justify-between font-medium text-textPrimary">
-                                Article
-                                <span className="text-sm cursor-pointer" onClick={() => handleCopy(article)}>{copied ? "Copied" : "Copy"}</span>
-                            </label>
+                        <div className="flex flex-col gap-10 mb-20">
+                            {/* Article */}
+                            <div className="flex flex-col gap-2">
+                                <label className="flex justify-between font-medium text-textPrimary">
+                                    Article
+                                    <span className="text-sm cursor-pointer" onClick={() => handleCopy(article)}>{copied ? "Copied" : "Copy"}</span>
+                                </label>
 
-                            <div className="rounded-md p-4 bg-baseSecondary ">
-                                <Markdown
-                                    className='prose md:prose-lg prose-pre:p-0 prose-pre:bg-transparent'
-                                    remarkPlugins={[remarkMath]}
-                                    components={{
-                                        p({ children }) {
-                                            return <p className='text-textPrimary'>{children}</p>
-                                        },
-                                    }}
-                                >
-                                    {article}
-                                </Markdown>
+                                <div className="rounded-md p-4 bg-baseSecondary ">
+                                    <Markdown
+                                        className='prose md:prose-lg prose-pre:p-0 prose-pre:bg-transparent'
+                                        remarkPlugins={[remarkMath, remarkGfm]}
+                                        components={{
+                                            p({ children }) {
+                                                return <p className='text-textPrimary'>{children}</p>
+                                            },
+                                        }}
+                                    >
+                                        {article}
+                                    </Markdown>
+                                </div>
+                            </div>
+
+                            {/* Audio */}
+                            <div className="flex flex-col gap-2">
+                                <label className="flex justify-between font-medium text-textPrimary">
+                                    Audio Text
+                                    {/* <span className="text-sm cursor-pointer" onClick={() => handleCopy(article)}>{copied ? "Copied" : "Copy"}</span> */}
+                                </label>
+
+                                <div className="rounded-md p-4 bg-baseSecondary ">
+                                    <Markdown
+                                        className='prose md:prose-lg prose-pre:p-0 prose-pre:bg-transparent'
+                                        remarkPlugins={[remarkMath, remarkGfm]}
+                                        components={{
+                                            p({ children }) {
+                                                return <p className='text-textPrimary'>{children}</p>
+                                            },
+                                        }}
+                                    >
+                                        {audioText}
+                                    </Markdown>
+                                </div>
                             </div>
                         </div>                   
                     }

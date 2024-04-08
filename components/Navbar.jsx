@@ -17,7 +17,7 @@ const Navbar = () => {
                     {/* Logo */}
                     <Link href={"/"} onClick={() => setOpen(false)} className="flex items-center gap-5 ">
                         {/* <Image src={"/assets/images/logoTransparentWhite.png"} alt="logo" width={50} height={50} className="w-10" /> */}
-                        <h2 className="text-lg md:text-xl font-bold">tutors.sg.com</h2>
+                        <h2 className="text-lg md:text-xl font-bold">tutors.com.sg</h2>
                     </Link>
 
                     {/* Desktop Navigation */}
