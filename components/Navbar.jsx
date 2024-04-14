@@ -24,6 +24,7 @@ const Navbar = () => {
                     <nav className="hidden md:flex gap-8 items-center">
                         <Link href={"/"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Home</Link>
                         <Link href={"/tiktok-to-article"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Tiktok To Article</Link>
+                        <Link href={"/silence"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Silencer</Link>
                     </nav>
 
                     {/* Mobile Navigation */}
@@ -46,6 +47,7 @@ const Navbar = () => {
             <nav className={`fixed z-[10] md:hidden flex flex-col gap-5 p-5 w-full bg-basePrimary ${ open ? "translate-y-0 top-20" : "-translate-y-full top-0"} transition-transform duration-300 ease-in-out delay-0`}>
                 <Link href={"/"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Home</Link>
                 <Link href={"/tiktok-to-article"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Tiktok To Article</Link>
+                <Link href={"/silence"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Silencer</Link>
             </nav>
 
         </header>
