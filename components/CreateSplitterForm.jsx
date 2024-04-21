@@ -102,7 +102,7 @@ const CreateSplitterForm = () => {
             setLoading(true);
         
             // Fetch Request to Backend
-            const res = await fetch("http://localhost:5000/upload", {
+            const res = await fetch("https://feelans.site/upload", {
                 method: "POST",
                 body: formData,
             });
