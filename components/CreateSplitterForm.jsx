@@ -1,7 +1,9 @@
 "use client"
 
+import OpenAI from 'openai';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react'
+import copy from "copy-to-clipboard";
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -12,10 +14,12 @@ const CreateSplitterForm = () => {
     // User Feedback
     const [loading, setLoading] = useState(false);
     const [notif, setNotif] = useState({ active: false, message: "", success: 0 });
+    const [copied, setCopied] = useState(false);
 
     // User Input
     const [file, setFile] = useState(null);
-    const [seconds, setSeconds] = useState(5);
+    const [seconds, setSeconds] = useState(60);
+    const [openaiAPI, setOpenaiAPI] = useState("");
 
     // Response
     const [link, setLink] = useState("");
@@ -23,8 +27,17 @@ const CreateSplitterForm = () => {
 
     // Error Handling
     const [errorSeconds, setErrorSeconds] = useState("");
+    const [errorOpenaiAPI, setErrorOpenaiAPI] = useState("");
 
-    // Duration of Each Clip
+    // Handle Copy
+    const handleCopy = async (text) => {
+        copy(`${text}`);
+        setNotif({ active: true, message: "Text Copied!", success: 1 });
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    // Handle Form onChange
     const handleSeconds = (e) => {
         const inputNumber = e.target.value;
         setErrorSeconds("");
@@ -35,17 +48,21 @@ const CreateSplitterForm = () => {
         setSeconds(inputNumber);
     };
 
-    // File Uploading
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         setFile(selectedFile);
     };
 
-    // Button to Download
-    const handleDownload = async () => link && window.open(link)
+    const handleOpenaiAPI = (e) => {
+        const inputText = e.target.value;
+        if (inputText.length <= 100) {
+            setErrorOpenaiAPI("");
+            setOpenaiAPI(inputText);
+        };
+    };
 
     // Form Submission
-    const handleSubmit =async (e) => {
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
 
@@ -53,10 +70,23 @@ const CreateSplitterForm = () => {
         let check = true;
         if (!file) return;
              
-        if (!seconds || parseInt(seconds) < 5) {
-            setErrorSeconds("min 5 seconds!");
+        if (!seconds || parseInt(seconds) < 30) {
+            setErrorSeconds("min 30 seconds!");
             check = false;
         };
+
+        if (openaiAPI?.trim().length < 30 || openaiAPI?.length > 100) {
+            setErrorOpenaiAPI("please provide the correct api key");
+            check = false;
+        } else {
+            const openai = new OpenAI({ apiKey: openaiAPI, dangerouslyAllowBrowser: true });
+            try {
+                await openai.models.list(); // Small Call to Check API Key
+            } catch (err) {
+                setErrorOpenaiAPI("please provide the correct api key")
+                check = false;
+            };
+        }
 
         if (!check) return;
 
@@ -64,6 +94,7 @@ const CreateSplitterForm = () => {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("seconds", parseInt(seconds))
+        formData.append("openai_api", openaiAPI)
 
         try {
             
@@ -71,7 +102,7 @@ const CreateSplitterForm = () => {
             setLoading(true);
         
             // Fetch Request to Backend
-            const res = await fetch("https://feelans.site/upload", {
+            const res = await fetch("http://localhost:5000/upload", {
                 method: "POST",
                 body: formData,
             });
@@ -94,8 +125,8 @@ const CreateSplitterForm = () => {
         };
     };
 
-  return (
-    <>
+    return (
+        <div className='w-full flex flex-col gap-10'>
             <form onSubmit={handleSubmit} className='w-full flex flex-col gap-10'>
                 { loading ? 
                     <div className='h-[calc(100dvh-22rem)] flex items-center justify-center'>
@@ -103,11 +134,11 @@ const CreateSplitterForm = () => {
                     </div>
                     :
                     <>
-                        {/* OpenAI API Key */}
+                        {/* Upload Video */}
                         <div className="flex flex-col gap-2 relative">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 Upload Video
-                                <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4</span>
+                                <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4 (up to 1GB)</span>
                             </label>
 
                             <input 
@@ -119,11 +150,11 @@ const CreateSplitterForm = () => {
                             />
                         </div>
                         
-                        {/* Seconds */}
+                        {/* Clip Seconds */}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 Clip Duration
-                                <span className="text-textSecondary text-xs pl-3 italic font-normal">(min 5 seconds)</span>
+                                <span className="text-textSecondary text-xs pl-3 italic font-normal">(min 30 seconds)</span>
                             </label>
 
                             <input
@@ -140,7 +171,8 @@ const CreateSplitterForm = () => {
                             </div>
                         </div>
 
-                        {/* <div className="flex flex-col gap-2">
+                        {/* OpenAI API */}
+                        <div className="flex flex-col gap-2">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 OpenAI API Key
                                 <span className="text-textSecondary text-xs pl-3 italic font-normal">1-100 characters</span>
@@ -159,40 +191,49 @@ const CreateSplitterForm = () => {
                                 {errorOpenaiAPI && <p className="text-red-500 text-xs">{errorOpenaiAPI}</p>}
                                 <div className="text-textSecondary text-sm">{openaiAPI.length}/100</div>
                             </div>
-                        </div> */}
+                        </div>
                         
-                        <button type="submit" disabled={loading} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover ${loading && "bg-baseSecondaryHover"}`}>
+                        {/* Submit Button */}
+                        <button type="submit" disabled={loading} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover`}>
                             {loading ? "Loading..." : "Upload"}
                         </button>
-
-                        { link && 
-                            <div className="flex flex-col gap-5 mb-20">
-                                <button onClick={handleDownload} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover ${loading && "bg-baseSecondaryHover"}`}>
-                                    Download
-                                </button>
-                                <p className='text-red-400 text-center'>some videos might not be able to be downloaded</p>
-                                <div className="rounded-md p-4 bg-baseSecondary ">
-                                    <Markdown
-                                        className='prose md:prose-lg prose-pre:p-0 prose-pre:bg-transparent'
-                                        remarkPlugins={[remarkMath, remarkGfm]}
-                                        components={{
-                                            p({ children }) {
-                                                return <p className='text-textPrimary'>{children}</p>
-                                            },
-                                        }}
-                                    >
-                                        {text}
-                                    </Markdown>
-                                </div>
-                            </div>
-                        }  
-
-                        { notif?.active && <Notif notif={notif} setNotif={setNotif} />}
                     </>
                 }
             </form>
-        </>
-  )
+
+            { (link && !loading) && 
+                <div className="flex flex-col gap-5 mb-20">
+
+                    <button type='button' onClick={() => { link && window.open(link) }} className={`w-full my-5 text-textPrimary rounded-md bg-green-700 h-12 font-medium hover:bg-green-900`}>
+                        Download
+                    </button>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="flex justify-between font-medium text-textPrimary">
+                            GPT Response
+                            <span className="text-sm cursor-pointer" onClick={() => handleCopy(text)}>{copied ? "Copied" : "Copy"}</span>
+                        </label>
+                        <div className="rounded-md p-4 bg-baseSecondary ">
+                            <Markdown
+                                className='prose md:prose-lg prose-pre:p-0 prose-pre:bg-transparent'
+                                remarkPlugins={[remarkMath, remarkGfm]}
+                                components={{
+                                    p({ children }) {
+                                        return <p className='text-textPrimary'>{children}</p>
+                                    },
+                                }}
+                            >
+                                {text}
+                            </Markdown>
+                        </div>
+                    </div>
+
+                </div>
+            }  
+
+            { notif?.active && <Notif notif={notif} setNotif={setNotif} />}
+        </div>
+    )
 }
 
 export default CreateSplitterForm

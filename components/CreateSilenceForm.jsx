@@ -51,8 +51,8 @@ const CreateSilenceForm = () => {
         }
     };
 
-  return (
-    <>
+    return (
+        <div className='flex flex-col gap-10'>
             <form onSubmit={handleSubmit} className='w-full flex flex-col gap-10'>
                 { loading ? 
                     <div className='h-[calc(100dvh-22rem)] flex items-center justify-center'>
@@ -79,18 +79,18 @@ const CreateSilenceForm = () => {
                         <button type="submit" disabled={loading} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover ${loading && "bg-baseSecondaryHover"}`}>
                             {loading ? "Loading..." : "Upload"}
                         </button>
-
-                        { link && 
-                            <button onClick={handleDownload} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover ${loading && "bg-baseSecondaryHover"}`}>
-                                Download
-                            </button>
-                        }  
-
-                        { notif?.active && <Notif notif={notif} setNotif={setNotif} />}
                     </>
                 }
             </form>
-        </>
+
+            { (link && !loading) && 
+                <button onClick={handleDownload} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover ${loading && "bg-baseSecondaryHover"}`}>
+                    Download
+                </button>
+            }  
+
+            { notif?.active && <Notif notif={notif} setNotif={setNotif} />}
+        </div>
   )
 }
 
