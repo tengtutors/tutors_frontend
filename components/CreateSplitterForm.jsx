@@ -18,7 +18,7 @@ const CreateSplitterForm = () => {
 
     // User Input
     const [file, setFile] = useState(null);
-    const [seconds, setSeconds] = useState(60);
+    const [seconds, setSeconds] = useState(30);
     const [openaiAPI, setOpenaiAPI] = useState("");
 
     // Response
@@ -70,8 +70,8 @@ const CreateSplitterForm = () => {
         let check = true;
         if (!file) return;
              
-        if (!seconds || parseInt(seconds) < 30) {
-            setErrorSeconds("min 30 seconds!");
+        if (!seconds || parseInt(seconds) < 15) {
+            setErrorSeconds("min 15 seconds!");
             check = false;
         };
 
@@ -154,14 +154,14 @@ const CreateSplitterForm = () => {
                         <div className="flex flex-col gap-2">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 Clip Duration
-                                <span className="text-textSecondary text-xs pl-3 italic font-normal">(min 30 seconds)</span>
+                                <span className="text-textSecondary text-xs pl-3 italic font-normal">(min 15 seconds)</span>
                             </label>
 
                             <input
                                 className={`p-3 rounded-md focus:outline-none placeholder:text-textSecondary focus:border focus:border-textSecondary bg-baseSecondary text-textPrimary ${errorSeconds && "border border-red-500"}`}
                                 type="text"
                                 id="display"
-                                placeholder="60"
+                                placeholder="30"
                                 value={seconds}
                                 onChange={handleSeconds}
                             />
