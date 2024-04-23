@@ -22,8 +22,8 @@ const CreateArticleForm = () => {
     const [audioText, setAudioText] = useState("")
     
     // User Input
-    const [openaiAPI, setOpenaiAPI] = useState("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");
-    const [tiktokURL, setTiktokURL] = useState("https://www.tiktok.com/@ace_scorers/video/7352615843752119569");
+    const [openaiAPI, setOpenaiAPI] = useState("");
+    const [tiktokURL, setTiktokURL] = useState("");
     const [prompt, setPrompt] = useState("");
 
     // Error State
