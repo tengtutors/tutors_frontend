@@ -6,53 +6,64 @@ const Notif = dynamic(() => import("@/components/Notif"));
 
 const CreateSilenceForm = () => {
 
+    // User Feedback
     const [loading, setLoading] = useState(false);
     const [notif, setNotif] = useState({ active: false, message: "", success: 0 });
     
-    const [file, setFile] = useState(null);
+    // User Response
     const [link, setLink] = useState("");
 
+    // User Input
+    const [file, setFile] = useState(null);
+
+    // Handle File Input
     const handleFileChange = (e) => {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
     };
 
-    const handleDownload = async () => {
-        if (link) window.open(link);
-    };
-
+    // Form Submission
     const handleSubmit =async (e) => {
 
         e.preventDefault();
+
+        // Form Validation
         if (!file) return;
 
+        // Construct Form Data (Send to Backend)
         const formData = new FormData();
         formData.append("file", file);
 
         try {
 
+            // Show Loading UI
             setLoading(true);
         
-            const res = await fetch("https://royalsty.pythonanywhere.com/upload", {
+            // Fetch Request to Backend 
+            const res = await fetch("https://feelans.site/silence", {
                 method: "POST",
                 body: formData,
             });
+            const resData = await res.json(); // { success: True, message: "Video Created", url: "https://urltobackend.com/" }
     
-            setLink(res?.url)
-            setNotif({ active: true, message: "Video Created!", success: 1 });
+            // Check Return
+            if (resData?.success) {
+                setLink(resData?.url)
+                setNotif({ active: true, message: "Video Created!", success: 1 });
+            } else {
+                throw new Error("Something Went Wrong")
+            };
             
         } catch (err) {
-            
             console.log(err.message)
             setNotif({ active: true, message: "Failed to Create!", success: -1 });
-
         } finally {
             setLoading(false);
-        }
+        };
     };
 
     return (
-        <div className='flex flex-col gap-10'>
+        <div className='w-full flex flex-col gap-10'>
             <form onSubmit={handleSubmit} className='w-full flex flex-col gap-10'>
                 { loading ? 
                     <div className='h-[calc(100dvh-22rem)] flex items-center justify-center'>
@@ -84,7 +95,7 @@ const CreateSilenceForm = () => {
             </form>
 
             { (link && !loading) && 
-                <button onClick={handleDownload} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover ${loading && "bg-baseSecondaryHover"}`}>
+                <button onClick={() => { link && window.open(link) }} className={`w-full my-5 text-textPrimary rounded-md bg-green-700 h-12 font-medium hover:bg-green-900 ${loading && "bg-baseSecondaryHover"}`}>
                     Download
                 </button>
             }  

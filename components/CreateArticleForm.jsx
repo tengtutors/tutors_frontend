@@ -1,39 +1,43 @@
 "use client"
 
+import OpenAI from "openai";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import copy from "copy-to-clipboard";
-import { createArticle, generateArticle } from "@/app/actions";
 import Markdown from 'react-markdown';
 import remarkMath from 'remark-math'
 import remarkGfm from 'remark-gfm';
+import { createArticle, generateArticle } from "@/app/actions";
 const Notif = dynamic(() => import("@/components/Notif"));
 
 const CreateArticleForm = () => {
-
-    // onClick Handler
-    const handleCopy = async (article) => {
-        copy(`${article}`);
-        setNotif({ active: true, message: "Text Copied!", success: 0 });
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-    
+        
+    // User Feedback
     const [notif, setNotif] = useState({ active: false, message: "", success: 0 });
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    // Response
     const [article, setArticle] = useState("");
     const [audioText, setAudioText] = useState("")
     
-    // Form State
-    const [openaiAPI, setOpenaiAPI] = useState("");
-    const [tiktokURL, setTiktokURL] = useState("");
+    // User Input
+    const [openaiAPI, setOpenaiAPI] = useState("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");
+    const [tiktokURL, setTiktokURL] = useState("https://www.tiktok.com/@ace_scorers/video/7352615843752119569");
     const [prompt, setPrompt] = useState("");
 
     // Error State
     const [errorOpenaiAPI, setErrorOpenaiAPI] = useState("");
     const [errorTiktokURL, setErrorTiktokURL] = useState("");
     const [errorPrompt, setErrorPrompt] = useState("");
+
+    // onClick Handler
+    const handleCopy = async (article) => {
+        copy(`${article}`);
+        setNotif({ active: true, message: "Text Copied!", success: 1 });
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     // State Form Handler - Controlled Input
     const handleOpenaiAPI = (e) => {
@@ -64,27 +68,32 @@ const CreateArticleForm = () => {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-        
-        // setNotif({ active: true, message: "Wait", success: -1 });
-        // return;
 
+        // Form Validation
         let check = true;
 
-        // API KEY 1 - 30
+        // OpenAI API
         if (openaiAPI?.trim().length < 30 || openaiAPI?.length > 100) {
             setErrorOpenaiAPI("please provide the correct api key");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             check = false;
-        };
+        } else {
+            const openai = new OpenAI({ apiKey: openaiAPI, dangerouslyAllowBrowser: true });
+            try {
+                await openai.models.list(); // Small Call to Check API Key
+            } catch (err) {
+                setErrorOpenaiAPI("please provide the correct api key")
+                check = false;
+            };
+        }
 
-        // Symbol 1 - 10
+        // Tiktok URL
         if (tiktokURL?.trim().length < 10 || tiktokURL?.length > 100 || !tiktokURL.includes("tiktok")) {
             setErrorTiktokURL("please provide the correct tiktok url");
             window.scrollTo({ top: 0, behavior: 'smooth' });
             check = false;
         };
 
-        // Description 0 - 100
+        // Prompt max 100
         if (prompt?.length > 100) {
             setErrorTiktokURL("max 100 characters");
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -94,17 +103,30 @@ const CreateArticleForm = () => {
         if (!check) return;
         
         try {
+            
+            // Show Loading UI
             setLoading(true);
-            const extractedText = await generateArticle({ openaiAPI, tiktokURL });
-            if (!extractedText) {
-                setNotif({ active: true, message: "Tiktok Video too long!", success: -1 });
-            } else {
-                const res2 = await createArticle({ extractedText, prompt, openaiAPI });
-                setArticle(res2.article);
-                setAudioText(res2.audio)
+
+            // Fetch Request to Backend
+            const res = await fetch("https://feelans.site/tiktok-to-article", {
+                method: "POST",
+                body: JSON.stringify({ openaiAPI, tiktokURL, prompt }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const resData = await res.json(); // { success: true, message: "Article Generated", data: "...article", gpt_text: "..." }
+
+            if(resData?.success){
+                setArticle(resData?.article);
+                setAudioText(resData?.gpt_text)
                 setNotif({ active: true, message: "Article Created!", success: 1 });
-            }
+            } else {
+                throw new Error(resData?.message)
+            };
+
         } catch (err) {
+            console.error(err.message)
             setNotif({ active: true, message: `${err?.message || "Something went wrong!"}`, success: -1 });
         } finally {
             setLoading(false);

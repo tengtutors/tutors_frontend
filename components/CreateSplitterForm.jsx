@@ -88,6 +88,10 @@ const CreateSplitterForm = () => {
             };
         }
 
+        // Reset Response
+        setLink("");
+        setText("");
+
         if (!check) return;
 
         // Construct Form Data (Send to Backend)
@@ -102,11 +106,11 @@ const CreateSplitterForm = () => {
             setLoading(true);
         
             // Fetch Request to Backend
-            const res = await fetch("https://feelans.site/upload", {
+            const res = await fetch("https://feelans.site/split", {
                 method: "POST",
                 body: formData,
             });
-            const resData = await res.json(); // { success: True, message: "Video Created", url: "https://urltobackend.com/" }
+            const resData = await res.json(); // { success: True, message: "Video Created", url: "https://urltobackend.com/", gpt_response: "...." }
 
             // Check Return
             if (resData?.success) {
@@ -210,7 +214,10 @@ const CreateSplitterForm = () => {
 
                     <div className="flex flex-col gap-2">
                         <label className="flex justify-between font-medium text-textPrimary">
-                            GPT Response
+                            <div className="">
+                                GPT Response
+                                <span className="text-textSecondary text-xs pl-3 italic font-normal">some videos might not available</span>
+                            </div>
                             <span className="text-sm cursor-pointer" onClick={() => handleCopy(text)}>{copied ? "Copied" : "Copy"}</span>
                         </label>
                         <div className="rounded-md p-4 bg-baseSecondary ">
