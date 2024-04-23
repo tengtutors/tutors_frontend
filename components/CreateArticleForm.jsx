@@ -7,7 +7,6 @@ import copy from "copy-to-clipboard";
 import Markdown from 'react-markdown';
 import remarkMath from 'remark-math'
 import remarkGfm from 'remark-gfm';
-import { createArticle, generateArticle } from "@/app/actions";
 const Notif = dynamic(() => import("@/components/Notif"));
 
 const CreateArticleForm = () => {
