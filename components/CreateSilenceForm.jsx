@@ -82,7 +82,7 @@ const CreateSilenceForm = () => {
                                 type="file" 
                                 accept="video/mp4" 
                                 onChange={handleFileChange}
-                                className="file-input w-full" 
+                                className="file-input w-full bg-baseSecondary" 
                                 required
                             />
                         </div>

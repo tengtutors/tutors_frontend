@@ -20,6 +20,13 @@ const CreateSplitterForm = () => {
     const [file, setFile] = useState(null);
     const [seconds, setSeconds] = useState(30);
     const [openaiAPI, setOpenaiAPI] = useState("");
+    const [prompt, setPrompt] = useState(`Find some of the best moment for my video content and give the title recommendation for each clip from the SRT Text Format delimited by triple quotes. Each clip should be <<TIME>> seconds.
+Return only timestamps with the format of HH:MM:SS,sss --> HH:MM:SS,sss and the title. 
+For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
+"""
+<<SRT>>
+"""
+    `);
 
     // Response
     const [link, setLink] = useState("");
@@ -28,6 +35,7 @@ const CreateSplitterForm = () => {
     // Error Handling
     const [errorSeconds, setErrorSeconds] = useState("");
     const [errorOpenaiAPI, setErrorOpenaiAPI] = useState("");
+    const [errorPrompt, setErrorPrompt] = useState("");
 
     // Handle Copy
     const handleCopy = async (text) => {
@@ -61,6 +69,14 @@ const CreateSplitterForm = () => {
         };
     };
 
+    const handlePrompt = (e) => {
+        const inputText = e.target.value;
+        if (inputText.length <= 1000) {
+            setErrorPrompt("");
+            setPrompt(inputText);
+        };
+    };
+
     // Form Submission
     const handleSubmit = async (e) => {
 
@@ -86,19 +102,25 @@ const CreateSplitterForm = () => {
                 setErrorOpenaiAPI("please provide the correct api key")
                 check = false;
             };
-        }
+        };
 
+        if (prompt.length > 1000){
+            setErrorPrompt("max 1000 characters");
+            check = false;
+        };
+
+        if (!check) return;
+        
         // Reset Response
         setLink("");
         setText("");
-
-        if (!check) return;
 
         // Construct Form Data (Send to Backend)
         const formData = new FormData();
         formData.append("file", file);
         formData.append("seconds", parseInt(seconds))
         formData.append("openai_api", openaiAPI)
+        formData.append("prompt", prompt);
 
         try {
             
@@ -149,7 +171,7 @@ const CreateSplitterForm = () => {
                                 type="file" 
                                 accept="video/mp4" 
                                 onChange={handleFileChange}
-                                className="file-input w-full" 
+                                className="file-input w-full bg-baseSecondary" 
                                 required
                             />
                         </div>
@@ -194,6 +216,29 @@ const CreateSplitterForm = () => {
                             <div className={`flex items-center ${errorOpenaiAPI ? "justify-between" : "justify-end"}`}>
                                 {errorOpenaiAPI && <p className="text-red-500 text-xs">{errorOpenaiAPI}</p>}
                                 <div className="text-textSecondary text-sm">{openaiAPI.length}/100</div>
+                            </div>
+                        </div>
+
+                        {/* OpenAI API */}
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="display" className="font-medium text-textPrimary">
+                                Prompt
+                                <span className="text-textSecondary text-xs pl-3 italic font-normal">{`do not remove the <<TIME>> and <<SRT>>`}</span>
+                            </label>
+
+                            <textarea
+                                className={`p-3 rounded-md focus:outline-none placeholder:text-textSecondary focus:border focus:border-textSecondary bg-baseSecondary text-textPrimary ${errorPrompt && "border border-red-500"}`}
+                                rows={12}
+                                type="text"
+                                id="display"
+                                placeholder="Your prompt to ChatGPT"
+                                value={prompt}
+                                onChange={handlePrompt}
+                            />
+
+                            <div className={`flex items-center ${errorPrompt ? "justify-between" : "justify-end"}`}>
+                                {errorPrompt && <p className="text-red-500 text-xs">{errorPrompt}</p>}
+                                <div className="text-textSecondary text-sm">{prompt.length}/1000</div>
                             </div>
                         </div>
                         
