@@ -20,7 +20,7 @@ const CreateSplitterForm = () => {
     const [file, setFile] = useState(null);
     const [seconds, setSeconds] = useState(30);
     const [openaiAPI, setOpenaiAPI] = useState("");
-    const [prompt, setPrompt] = useState(`From the transcript extract interesting conversations into a clip and give the title recommendation for each clip from the SRT Text Format delimited by triple quotes. Clips cannot be less than 30 seconds. If less than 30 secs, add 10 seconds before and after the clip to create a new clip.Each clip should be <<TIME>> seconds.
+    const [prompt, setPrompt] = useState(`From the transcript extract interesting conversations into a clip and give the title recommendation for each clip from the SRT Text Format delimited by triple quotes.  Each clip should be <<TIME>> seconds. If clips are less than 60 seconds add 00:00:15 to before and after the timestamps.
 Return only timestamps with the format of HH:MM:SS,sss --> HH:MM:SS,sss and the title. 
 For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
 """
