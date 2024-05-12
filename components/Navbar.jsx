@@ -26,6 +26,7 @@ const Navbar = () => {
                         <Link href={"/tiktok-to-article"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Tiktok To Article</Link>
                         <Link href={"/silence"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Silencer</Link>
                         <Link href={"/splitter"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Splitter</Link>
+                        <Link href={"/transcripts-splitter"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Transplit</Link>
                     </nav>
 
                     {/* Mobile Navigation */}
@@ -50,6 +51,7 @@ const Navbar = () => {
                 <Link href={"/tiktok-to-article"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Tiktok To Article</Link>
                 <Link href={"/silence"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Silencer</Link>
                 <Link href={"/splitter"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Splitter</Link>
+                <Link href={"/transcripts-splitter"} onClick={() => setOpen(false)} className="hover:text-textSecondary">Transplit</Link>
             </nav>
 
         </header>

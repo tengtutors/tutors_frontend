@@ -33,6 +33,7 @@ For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
     const [text, setText] = useState("");
 
     // Error Handling
+    const [errorFile, setErrorFile] = useState("");
     const [errorSeconds, setErrorSeconds] = useState("");
     const [errorOpenaiAPI, setErrorOpenaiAPI] = useState("");
     const [errorPrompt, setErrorPrompt] = useState("");
@@ -58,7 +59,13 @@ For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
-        setFile(selectedFile);
+        if (selectedFile && selectedFile?.name?.endsWith('.mp4')) {
+            setFile(selectedFile);
+            setErrorFile('');
+        } else {
+            setFile(null);
+            setErrorFile("only mp4 allowed!");
+        }
     };
 
     const handleOpenaiAPI = (e) => {
@@ -171,9 +178,13 @@ For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
                                 type="file" 
                                 accept="video/mp4" 
                                 onChange={handleFileChange}
-                                className="file-input w-full bg-baseSecondary" 
+                                className={`file-input w-full bg-baseSecondary ${errorFile && "border border-red-500"}`}
                                 required
                             />
+
+                            <div className={`flex items-center ${errorFile ? "justify-between" : "justify-end"}`}>
+                                {errorFile && <p className="text-red-500 text-xs">{errorFile}</p>}
+                            </div>
                         </div>
                         
                         {/* Clip Seconds */}
@@ -219,7 +230,7 @@ For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
                             </div>
                         </div>
 
-                        {/* OpenAI API */}
+                        {/* Prompt GPT */}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 Prompt
