@@ -11,7 +11,7 @@ const Notif = dynamic(() => import("@/components/Notif"));
 const CreateTranscriptForm = () => {
 
     // Step 1 = Insert Video, Step 2 = Update Transcriptions
-    const [step, setStep] = useState(2); 
+    const [step, setStep] = useState(1); 
 
     // User Feedback
     const [loading, setLoading] = useState(false);
