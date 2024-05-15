@@ -183,7 +183,7 @@ const CreateTranscriptForm = () => {
                             <div className="flex flex-col gap-2 relative">
                                 <label htmlFor="display" className="font-medium text-textPrimary">
                                     Upload Video
-                                    <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4 (up to 1GB)</span>
+                                    <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4 (up to 30 minutes)</span>
                                 </label>
 
                                 <input 
