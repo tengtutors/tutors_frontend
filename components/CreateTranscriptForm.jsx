@@ -275,7 +275,7 @@ const CreateTranscriptForm = () => {
                                     rows={12}
                                     type="text"
                                     id="display"
-                                    placeholder="Format: 00:01:23,456 --> 00:01:25,789 (hours:minutes:seconds,milliseconds)"
+                                    placeholder="Format: 00:01:23,456 --> 00:01:25,789 (hours:minutes:seconds,milliseconds) Key in multiple lines. The first line of timings is not used."
                                     value={prompt}
                                     onChange={handlePrompt}
                                 />
