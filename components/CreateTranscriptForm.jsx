@@ -184,7 +184,7 @@ const CreateTranscriptForm = () => {
                             <div className="flex flex-col gap-2 relative">
                                 <label htmlFor="display" className="font-medium text-textPrimary">
                                     Upload Video
-                                    <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4 (up to 1GB)</span>
+                                    <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4 (up to 30 minutes)</span>
                                 </label>
 
                                 <input 
@@ -276,7 +276,7 @@ const CreateTranscriptForm = () => {
                                     rows={12}
                                     type="text"
                                     id="display"
-                                    placeholder="Format: 00:01:23,456 --> 00:01:25,789 (hours:minutes:seconds,milliseconds)"
+                                    placeholder="Format: 00:01:23,456 --> 00:01:25,789 (hours:minutes:seconds,milliseconds) Key in multiple lines. The first line of timings is not used."
                                     value={prompt}
                                     onChange={handlePrompt}
                                 />

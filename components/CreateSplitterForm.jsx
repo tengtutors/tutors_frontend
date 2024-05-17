@@ -171,7 +171,7 @@ For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
                         <div className="flex flex-col gap-2 relative">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 Upload Video
-                                <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4 (up to 1GB)</span>
+                                <span className="text-textSecondary text-xs pl-3 italic font-normal">.mp4 (up to 30 minutes)</span>
                             </label>
 
                             <input 
@@ -191,7 +191,7 @@ For Example: HH:MM:SS,sss --> HH:MM:SS,sss - "The title"
                         <div className="flex flex-col gap-2">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 Clip Duration
-                                <span className="text-textSecondary text-xs pl-3 italic font-normal">(min 15 seconds)</span>
+                                <span className="text-textSecondary text-xs pl-3 italic font-normal">(minimum 15 seconds)</span>
                             </label>
 
                             <input
