@@ -134,8 +134,8 @@ const CreateTranscriptForm = () => {
 
         // Construct Form Data (Send to Backend)
         const formData = new FormData();
-        formData.append("random_id", randomId);
         formData.append("prompt", prompt);
+        formData.append("file", file);
 
         try {
             
@@ -152,6 +152,7 @@ const CreateTranscriptForm = () => {
             // Check Return
             if (resData?.success) {
                 setLink(resData?.url);
+                setMessage("Video Trimmed!");
                 setNotif({ active: true, message: "Video Splitted!", success: 1 });
             } else {
                 throw new Error("Something Went Wrong")
@@ -247,7 +248,7 @@ const CreateTranscriptForm = () => {
                         <>
                             <h1 className="text-center">Step 2 - Choose Timestamps</h1>
 
-                            { message && <div className="text-center text-red-500">{message}</div> }
+                            { message && <div className="text-center text-white">{message}</div> }
 
                             { (link || message) && 
                                 <button type='button' onClick={() => location.reload()} className={`w-full text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover`}>
@@ -287,11 +288,11 @@ const CreateTranscriptForm = () => {
                             </div>
                                                     
                             {/* Submit Button */}
-                            {(!link && !message) &&
+                            {/* {(!link && !message) && */}
                                 <button type="submit" disabled={loading} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover`}>
                                     {loading ? "Loading..." : "Cut Video"}
                                 </button>
-                            }
+                            {/* } */}
 
                             {/* Transcriptions */}
                             <div className="flex flex-col gap-2 mb-20">
