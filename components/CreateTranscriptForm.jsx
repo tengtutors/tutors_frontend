@@ -141,6 +141,7 @@ const CreateTranscriptForm = () => {
             
             // Show Loading UI
             setLoading(true);
+            console.log("Running")
         
             // Fetch Request to Backend
             const res = await fetch("https://feelans.site/transcribe-split-2", {
