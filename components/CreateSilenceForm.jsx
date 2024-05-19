@@ -29,6 +29,9 @@ const CreateSilenceForm = () => {
 
         // Form Validation
         if (!file) return;
+        if (file?.type !== "video/mp4") {
+            return;
+        };
 
         // Construct Form Data (Send to Backend)
         const formData = new FormData();
@@ -71,7 +74,7 @@ const CreateSilenceForm = () => {
                     </div>
                     :
                     <>
-                        {/* OpenAI API Key */}
+                        {/* Upload Video */}
                         <div className="flex flex-col gap-2 relative">
                             <label htmlFor="display" className="font-medium text-textPrimary">
                                 Upload Video
@@ -86,6 +89,14 @@ const CreateSilenceForm = () => {
                                 required
                             />
                         </div>
+
+                        {/* Video Display */}
+                        { file && (
+                            <div className='flex flex-col gap-2'>
+                                <h3 className='font-medium text-textPrimary'>Selected Video:</h3>
+                                <video controls className='aspect-video' src={URL.createObjectURL(file)}/>
+                            </div>
+                        )}
                         
                         <button type="submit" disabled={loading} className={`w-full my-5 text-textPrimary rounded-md bg-baseSecondary h-12 font-medium hover:bg-baseSecondaryHover ${loading && "bg-baseSecondaryHover"}`}>
                             {loading ? "Loading..." : "Upload"}
