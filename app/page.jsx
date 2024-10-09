@@ -8,7 +8,7 @@ const Page = async () => {
 
             <div className="max-w-[55rem] w-full flex flex-col items-center gap-5 px-5">
                 <h1 className="text-center font-extrabold text-4xl md:leading-snug md:text-5xl leading-snug">
-                    All In One
+                    All In One{" "}
                     <span className="bg-primary text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-secondary animate-gradient">
                         AI Marketing Automation
                     </span>
