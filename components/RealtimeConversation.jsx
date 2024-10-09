@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { postMessage } from "@/app/actions/realtimeActions";
+import OpenAI from "openai";
 
 const RealtimeConversation = () => {
     const { setNotif } = useContext(NotifContext);
@@ -108,12 +109,14 @@ const RealtimeConversation = () => {
             ]);
 
             // Validate OpenAI API key
-            if (apiKey?.trim().length < 30 || apiKey?.length > 100) {
-                setNotif({
-                    active: true,
-                    message: "Invalid API Key",
-                    status: -1,
-                });
+            const openai = new OpenAI({
+                apiKey: apiKey,
+                dangerouslyAllowBrowser: true,
+            });
+
+            try {
+                await openai.models.list();
+            } catch (err) {
                 throw new Error("Invalid API Key");
             }
 
